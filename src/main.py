@@ -25,6 +25,7 @@ from .inputs.adb import AdbConnector
 from .inputs.adb_wsl2 import AdbWsl2Connector
 from .inputs.tcp_connector import TcpConnector
 
+from .qcpatch_simcom_logtypes import register_custom_log_types
 def main():
 
     parser = ArgumentParser(
@@ -92,6 +93,7 @@ def main():
 
     if args.dlf_read:
         diag_input = DlfReader(args.dlf_read)
+        register_custom_log_types(diag_input)
     elif args.adb_wsl2:
         win_adb_path = Path(args.adb_wsl2).resolve()
         if not win_adb_path.is_file():
@@ -134,7 +136,7 @@ def main():
                 diag_input = UsbModemPyserialConnector(dev_intf.chardev_if_mounted)
             else:
                 diag_input = UsbModemPyusbConnector(dev_intf)
-        
+
     elif args.json_geo_read:
         diag_input = JsonGeoReader(args.json_geo_read)
     else:
@@ -170,19 +172,19 @@ def main():
     parse_modules_args(args)
 
     if args.cli:
-        
+
         if diag_input.modules or args.efs_shell:
             error('You can not both specify the use of CLI and a module')
             exit()
-        
+
         diag_input.add_module(CommandLineInterface(diag_input, parser, parse_modules_args))
 
     if args.efs_shell:
-        
+
         if diag_input.modules:
             error('You can not both specify the use of EFS shell and a module')
             exit()
-            
+
         from .modules.efs_shell import EfsShell
         diag_input.add_module(EfsShell(diag_input))
             

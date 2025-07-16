@@ -3,6 +3,7 @@
 from os.path import dirname, realpath
 from setuptools import setup
 
+
 SCRIPT_DIR = dirname(realpath(__file__))
 README_PATH = SCRIPT_DIR + '/README.md'
 
